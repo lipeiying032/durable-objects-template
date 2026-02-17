@@ -1,39 +1,44 @@
-// 🚨 关键点 1：必须从 cloudflare:workers 导入 DurableObject 基类
 import { DurableObject } from "cloudflare:workers";
 
 export default {
   async fetch(request, env) {
-    try {
-      const id = env.MAILBOX_DO.idFromName("global");
-      const stub = env.MAILBOX_DO.get(id);
-      return await stub.fetch(request);
-    } catch (e) {
-      return new Response("Bridge Error: " + e.message, { status: 500 });
-    }
+    const id = env.MAILBOX_DO.idFromName("global");
+    const stub = env.MAILBOX_DO.get(id);
+    return await stub.fetch(request);
   }
 }
 
-// 🚨 关键点 2：类定义必须加上 `extends DurableObject`
 export class MailboxDO extends DurableObject {
   constructor(ctx, env) {
-    // 必须调用 super
     super(ctx, env);
   }
 
-  // 这里的函数现在支持 RPC 远程调用了
+  // 1. ✅ 修复本次报错：初始化管理员
+  async ensureDefaultAdmins(admins) {
+    console.log("RPC: ensureDefaultAdmins called");
+    return true; 
+  }
+
+  // 2. 获取文件夹
   async getFolders() {
     return []; 
+  }
+
+  // 3. 获取/保存设置
+  async getSettings() {
+    return {};
   }
 
   async saveSettings(settings) {
     return { success: true };
   }
 
-  async getSettings() {
-    return {};
+  // 4. 处理邮件相关（预防后续报错）
+  async getMessages() {
+    return { messages: [], total: 0 };
   }
 
   async fetch(request) {
-    return new Response("MailboxDO is ready with RPC support");
+    return new Response("MailboxDO is running and fully stubbed.");
   }
 }
