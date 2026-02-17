@@ -6,6 +6,7 @@ export default {
     
     // 只有当路径包含 /api/ 或者明确发往 DO 时才处理
     if (url.pathname.includes('/api/') || url.searchParams.has('do')) {
+      // 注意：这里的 env.MAILBOX_DO 对应你 toml 里的 binding name，不需要改
       const id = env.MAILBOX_DO.idFromName("global");
       const stub = env.MAILBOX_DO.get(id);
       return await stub.fetch(request);
@@ -16,8 +17,10 @@ export default {
   }
 }
 
-
-export class MailboxDO extends DurableObject {
+/**
+ * 🚨 类名已更名为 MailboxDOV2 以绕过 Cloudflare 10074 迁移错误
+ */
+export class MailboxDOV2 extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
   }
@@ -53,10 +56,10 @@ export class MailboxDO extends DurableObject {
     
     return new Response(JSON.stringify({ 
       success: true, 
-      message: "MailboxDO is active and RPC ready",
+      message: "MailboxDOV2 is active and RPC ready",
       path: url.pathname 
     }), {
       headers: { "Content-Type": "application/json" }
     });
   }
-} // <--- 这里的这个大括号必须加上，用来闭合 MailboxDO 类
+} 
