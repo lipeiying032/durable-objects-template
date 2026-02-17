@@ -3,9 +3,9 @@ main = "src/index.mjs"
 compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
-name = "COUNTER"  # 这个变量名在模板里可能叫 COUNTER，保持不变没关系
-class_name = "MailboxDO" # 🚨 关键：这里必须改成 MailboxDO
+name = "COUNTER"
+class_name = "MailboxDO"
 
 [[migrations]]
-tag = "v2" # 🚨 重点：把 v1 改成 v2（或者随便换个数字），强制触发更新
-new_classes = ["MailboxDO"]
+tag = "v3" # 🚨 改成 v3，确保触发新迁移
+new_sqlite_classes = ["MailboxDO"] # 🚨 关键：把 new_classes 改成 new_sqlite_classes
