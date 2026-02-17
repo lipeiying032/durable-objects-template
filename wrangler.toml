@@ -7,5 +7,6 @@ name = "COUNTER"
 class_name = "MailboxDO"
 
 [[migrations]]
-tag = "v3" # 🚨 改成 v3，确保触发新迁移
-new_sqlite_classes = ["MailboxDO"] # 🚨 关键：把 new_classes 改成 new_sqlite_classes
+tag = "v4" # 🚨 改成 v4，必须是一个全新的标签
+renamed_classes = [{from = "Counter", to = "MailboxDO"}] # 🚨 核心：执行改名迁移
+new_sqlite_classes = ["MailboxDO"] # 同时声明它是 SQLite 模式
