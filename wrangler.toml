@@ -7,5 +7,5 @@ name = "MAILBOX_DO"
 class_name = "MailboxDO"
 
 [[migrations]]
-tag = "v7"
-new_sqlite_classes = ["MailboxDO"]
+tag = "v10" # 🚨 这里的 tag 一定要换个大的，比如 v10，确保是全新的尝试
+enable_sqlite = ["MailboxDO"] # 🚨 关键修改：用 enable_sqlite 代替 new_sqlite_classes
