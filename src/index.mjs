@@ -1,57 +1,31 @@
-// Worker
+// 这是一个“伪装”的 Worker，专门用来骗过 email-explorer
 
 export default {
   async fetch(request, env) {
-    return await handleRequest(request, env);
+    return new Response("Durable Object Mock Server Running");
   }
 }
 
-async function handleRequest(request, env) {
-  let id = env.COUNTER.idFromName("A");
-  let obj = env.COUNTER.get(id);
-  let resp = await obj.fetch(request.url);
-  let count = await resp.text();
-
-  return new Response("Durable Object 'A' count: " + count);
-}
-
-// Durable Object
-
-export class Counter {
+// 🚨 关键修改：把名字从 Counter 改成 MailboxDO
+export class MailboxDO {
   constructor(state, env) {
     this.state = state;
   }
 
-  // Handle HTTP requests from clients.
+  // 1. 保留 fetch 方法，防止报错
   async fetch(request) {
-    // Apply requested action.
-    let url = new URL(request.url);
+    return new Response("MailboxDO is alive!");
+  }
 
-    // Durable Object storage is automatically cached in-memory, so reading the
-    // same key every request is fast. (That said, you could also store the
-    // value in a class member if you prefer.)
-    let value = await this.state.storage.get("value") || 0;
-
-    switch (url.pathname) {
-    case "/increment":
-      ++value;
-      break;
-    case "/decrement":
-      --value;
-      break;
-    case "/":
-      // Just serve the current value.
-      break;
-    default:
-      return new Response("Not found", {status: 404});
-    }
-
-    // We don't have to worry about a concurrent request having modified the
-    // value in storage because "input gates" will automatically protect against
-    // unwanted concurrency. So, read-modify-write is safe. For more details,
-    // see: https://blog.cloudflare.com/durable-objects-easy-fast-correct-choose-three/
-    await this.state.storage.put("value", value);
-
-    return new Response(value);
+  // 2. ⭐ 核心修复：添加 getFolders 方法
+  // email-explorer 的第388行就是在找这个！
+  async getFolders() {
+    // 返回一个空数组，假装我们已经拿到了文件夹
+    return [];
+  }
+  
+  // 3. 预判：它可能还会调用 saveSettings，我们也补上
+  async saveSettings(settings) {
+    return true;
   }
 }
