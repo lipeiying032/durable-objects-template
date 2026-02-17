@@ -1,5 +1,5 @@
 name = "durable-objects-template"
-main = "index.ts"
+main = "src/index.mjs"
 compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
