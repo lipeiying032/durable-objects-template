@@ -1,3 +1,6 @@
+// 🚨 关键点 1：必须从 cloudflare:workers 导入 DurableObject 基类
+import { DurableObject } from "cloudflare:workers";
+
 export default {
   async fetch(request, env) {
     try {
@@ -10,19 +13,19 @@ export default {
   }
 }
 
-export class MailboxDO {
+// 🚨 关键点 2：类定义必须加上 `extends DurableObject`
+export class MailboxDO extends DurableObject {
   constructor(ctx, env) {
-    this.ctx = ctx;
+    // 必须调用 super
+    super(ctx, env);
   }
 
-  // 🚨 关键微调：这些方法需要被外部直接调用
+  // 这里的函数现在支持 RPC 远程调用了
   async getFolders() {
-    console.log("RPC: getFolders called");
     return []; 
   }
 
   async saveSettings(settings) {
-    console.log("RPC: saveSettings called");
     return { success: true };
   }
 
@@ -30,8 +33,7 @@ export class MailboxDO {
     return {};
   }
 
-  // 必须保留 fetch，因为这是 DO 的基础接口
   async fetch(request) {
-    return new Response("New MailboxDO is Ready");
+    return new Response("MailboxDO is ready with RPC support");
   }
 }
