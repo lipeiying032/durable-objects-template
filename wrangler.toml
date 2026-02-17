@@ -4,11 +4,8 @@ compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
 name = "MAILBOX_DO"
-# 🚨 检查这里！必须是 MailboxDOV2
-class_name = "MailboxDOV2" 
+class_name = "MailboxDO"
 
 [[migrations]]
-# 🚨 检查这里！tag 换成一个全新的 v100
-tag = "v100" 
-# 🚨 检查这里！必须是 MailboxDOV2
-new_sqlite_classes = ["MailboxDOV2"] 
+tag = "v1" # 重新从 v1 开始
+new_sqlite_classes = ["MailboxDO"]
