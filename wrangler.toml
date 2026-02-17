@@ -3,7 +3,7 @@ main = "index.mjs"
 compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
-name = "MAILBOX_DOV2"
+name = "MAILBOX_DO"
 # 🚨 检查这里！必须是 MailboxDOV2
 class_name = "MailboxDOV2" 
 
