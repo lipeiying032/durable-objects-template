@@ -7,5 +7,5 @@ name = "MAILBOX_DO"
 class_name = "MailboxDO"
 
 [[migrations]]
-tag = "v1"
+tag = "v7"
 new_sqlite_classes = ["MailboxDO"]
