@@ -1,10 +1,11 @@
-name = "worker"
-main = "./src/index.mjs"
-compatibility_date = "2022-09-08"
+name = "durable-objects-template"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
 
-[durable_objects]
-bindings = [{name = "COUNTER", class_name = "Counter"}]
+[[durable_objects.bindings]]
+name = "COUNTER"
+class_name = "Counter"
 
 [[migrations]]
-tag = "v1" # Should be unique for each entry
-new_classes = ["Counter"]
+tag = "v1"
+new_sqlite_classes = ["Counter"]
