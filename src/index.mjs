@@ -1,9 +1,12 @@
 export default {
   async fetch(request, env) {
-    // 这里的 MAILBOX_DO 要和下面 toml 里的 binding 一致
-    const id = env.MAILBOX_DO.idFromName("global");
-    const stub = env.MAILBOX_DO.get(id);
-    return await stub.fetch(request);
+    try {
+      const id = env.MAILBOX_DO.idFromName("global");
+      const stub = env.MAILBOX_DO.get(id);
+      return await stub.fetch(request);
+    } catch (e) {
+      return new Response("Bridge Error: " + e.message, { status: 500 });
+    }
   }
 }
 
@@ -12,13 +15,14 @@ export class MailboxDO {
     this.ctx = ctx;
   }
 
-  // 核心：email-explorer 启动必须调用的方法
+  // 🚨 关键微调：这些方法需要被外部直接调用
   async getFolders() {
-    return []; // 返回空文件夹列表
+    console.log("RPC: getFolders called");
+    return []; 
   }
 
-  // 核心：设置保存方法
   async saveSettings(settings) {
+    console.log("RPC: saveSettings called");
     return { success: true };
   }
 
@@ -26,7 +30,7 @@ export class MailboxDO {
     return {};
   }
 
-  // 兜底方法
+  // 必须保留 fetch，因为这是 DO 的基础接口
   async fetch(request) {
     return new Response("New MailboxDO is Ready");
   }
