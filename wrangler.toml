@@ -3,10 +3,9 @@ main = "src/index.mjs"
 compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
-name = "COUNTER"
+name = "MAILBOX_DO"
 class_name = "MailboxDO"
 
 [[migrations]]
-tag = "v4" # 🚨 改成 v4，必须是一个全新的标签
-renamed_classes = [{from = "Counter", to = "MailboxDO"}] # 🚨 核心：执行改名迁移
-new_sqlite_classes = ["MailboxDO"] # 同时声明它是 SQLite 模式
+tag = "v1"
+new_sqlite_classes = ["MailboxDO"]
