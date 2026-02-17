@@ -1,31 +1,57 @@
-// 这是一个“伪装”的 Worker，专门用来骗过 email-explorer
+/**
+ * 这是一个“伪装”的 Durable Object Worker
+ * 专门用于解决 Pages 无法直接创建 DO 的“鸡生蛋”问题
+ */
 
 export default {
   async fetch(request, env) {
-    return new Response("Durable Object Mock Server Running");
+    // 这里的 COUNTER 必须和你的 wrangler.toml 里的 binding name 一致
+    try {
+      const id = env.COUNTER.idFromName("global-instance");
+      const obj = env.COUNTER.get(id);
+      return await obj.fetch(request);
+    } catch (e) {
+      return new Response("Worker Error: " + e.message, { status: 500 });
+    }
   }
 }
 
-// 🚨 关键修改：把名字从 Counter 改成 MailboxDO
+/**
+ * 核心类：MailboxDO
+ */
 export class MailboxDO {
-  constructor(state, env) {
-    this.state = state;
+  constructor(ctx, env) {
+    // ctx.storage 是 SQLite 模式下的关键
+    this.ctx = ctx;
+    this.env = env;
   }
 
-  // 1. 保留 fetch 方法，防止报错
+  // 处理来自主项目的 fetch 请求
   async fetch(request) {
-    return new Response("MailboxDO is alive!");
+    return new Response("MailboxDO (Mock) is active and responding!");
   }
 
-  // 2. ⭐ 核心修复：添加 getFolders 方法
-  // email-explorer 的第388行就是在找这个！
+  // 1. 获取文件夹列表（email-explorer 第 388 行必调）
   async getFolders() {
-    // 返回一个空数组，假装我们已经拿到了文件夹
+    console.log("Mock: getFolders called");
+    // 返回空数组即可让主项目继续运行
     return [];
   }
-  
-  // 3. 预判：它可能还会调用 saveSettings，我们也补上
+
+  // 2. 保存设置（主项目初始化时可能会调）
   async saveSettings(settings) {
-    return true;
+    console.log("Mock: saveSettings called");
+    return { success: true };
+  }
+
+  // 3. 获取设置
+  async getSettings() {
+    console.log("Mock: getSettings called");
+    return {};
+  }
+
+  // 4. 处理邮件索引（预防性补全）
+  async getMessages() {
+    return { messages: [], total: 0 };
   }
 }
