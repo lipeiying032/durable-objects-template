@@ -3,9 +3,9 @@ main = "src/index.mjs"
 compatibility_date = "2025-01-01"
 
 [[durable_objects.bindings]]
-name = "MAILBOX_DO"
-class_name = "MailboxDO"
+name = "MAILBOX_DO" # 绑定名不变，代码不用改这里
+class_name = "MailboxDOV2" # 👈 改成 V2
 
 [[migrations]]
-tag = "v10" # 🚨 这里的 tag 一定要换个大的，比如 v10，确保是全新的尝试
-enable_sqlite = ["MailboxDO"] # 🚨 关键修改：用 enable_sqlite 代替 new_sqlite_classes
+tag = "v20" # 👈 直接跳到 v20，确保全新
+new_sqlite_classes = ["MailboxDOV2"] # 👈 使用新名字
