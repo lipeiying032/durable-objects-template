@@ -2,12 +2,20 @@ import { DurableObject } from "cloudflare:workers";
 
 export default {
   async fetch(request, env) {
-    // 这里的 MAILBOX_DO 必须和你的 wrangler.toml 里的 binding name 一致
-    const id = env.MAILBOX_DO.idFromName("global");
-    const stub = env.MAILBOX_DO.get(id);
-    return await stub.fetch(request);
+    const url = new URL(request.url);
+    
+    // 只有当路径包含 /api/ 或者明确发往 DO 时才处理
+    if (url.pathname.includes('/api/') || url.searchParams.has('do')) {
+      const id = env.MAILBOX_DO.idFromName("global");
+      const stub = env.MAILBOX_DO.get(id);
+      return await stub.fetch(request);
+    }
+    
+    // 其他请求直接返回，让 Pages 自己的静态资源去接管
+    return new Response("Not Found", { status: 404 });
   }
-};
+}
+
 
 export class MailboxDO extends DurableObject {
   constructor(ctx, env) {
