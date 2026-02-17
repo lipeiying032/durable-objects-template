@@ -38,7 +38,16 @@ export class MailboxDO extends DurableObject {
     return { messages: [], total: 0 };
   }
 
-  async fetch(request) {
-    return new Response("MailboxDO is running and fully stubbed.");
-  }
+// 在 MailboxDO 类中修改 fetch 方法
+async fetch(request) {
+  const url = new URL(request.url);
+  
+  // 如果是主程序在探测，返回一个 JSON 成功响应
+  return new Response(JSON.stringify({ 
+    success: true, 
+    message: "MailboxDO is active",
+    path: url.pathname 
+  }), {
+    headers: { "Content-Type": "application/json" }
+  });
 }
